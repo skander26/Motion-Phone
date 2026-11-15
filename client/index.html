@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>PhoneMotion Controller</title>
+  <link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+  <!-- Sticky safety & connection bar so EMERGENCY STOP is always visible -->
+  <header class="top-bar">
+    <div class="top-info">
+      <div class="title-row">
+        <h1>PhoneMotion</h1>
+        <span id="state-badge" class="badge badge-disconnected">Disconnected</span>
+      </div>
+      <div class="meta-row">
+        <span id="sample-rate" class="meta-chip">0.0 Hz</span>
+        <span id="rtt-latency" class="meta-chip">RTT: -- ms</span>
+        <span id="sensor-source" class="meta-chip">Idle</span>
+      </div>
+    </div>
+    <div class="top-actions">
+      <button id="connect-btn" class="btn btn-connect" type="button">Connect</button>
+      <button id="stop-btn" class="btn btn-stop" type="button" disabled>EMERGENCY STOP</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <div id="error-msg" class="error-msg hidden" role="alert"></div>
+    <div id="calib-banner" class="calib-banner hidden" role="status">
+      Hold phone still (2s): calibrating gyro bias...
+    </div>
+
+    <!-- Landscape-friendly Joy-Con touch controls -->
+    <section class="deck-panel" aria-label="Mouse controls">
+      <div class="deck-top-row">
+        <button id="pause-btn" class="pad-btn pad-pause" type="button" disabled>
+          RECENTER / PAUSE
+        </button>
+        <button id="calibrate-btn" class="pad-btn pad-calibrate" type="button" disabled>
+          CALIBRATE GYRO (2s)
+        </button>
+      </div>
+
+      <div class="pad-grid">
+        <button id="btn-left" class="pad-btn pad-click" type="button" disabled>LEFT CLICK</button>
+        <button id="btn-right" class="pad-btn pad-click" type="button" disabled>RIGHT CLICK</button>
+        <button id="btn-scroll-up" class="pad-btn pad-scroll" type="button" disabled>SCROLL UP &#9650;</button>
+        <button id="btn-scroll-down" class="pad-btn pad-scroll" type="button" disabled>SCROLL DOWN &#9660;</button>
+      </div>
+    </section>
+
+    <!-- Live tuning & axis configuration -->
+    <section class="tuning-panel" aria-label="Motion tuning">
+      <div class="card">
+        <h2>Motion Tuning</h2>
+
+        <div class="slider-group">
+          <div class="slider-header">
+            <label for="slider-sensitivity">Sensitivity</label>
+            <span id="val-sensitivity" class="mono-val">1200</span>
+          </div>
+          <input id="slider-sensitivity" type="range" min="100" max="3000" step="50" value="1200" />
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-header">
+            <label for="slider-smoothing">Smoothing (EMA)</label>
+            <span id="val-smoothing" class="mono-val">0.35</span>
+          </div>
+          <input id="slider-smoothing" type="range" min="0" max="0.90" step="0.05" value="0.35" />
+        </div>
+
+        <div class="slider-group">
+          <div class="slider-header">
+            <label for="slider-deadzone">Dead Zone (rad/s)</label>
+            <span id="val-deadzone" class="mono-val">0.025</span>
+          </div>
+          <input id="slider-deadzone" type="range" min="0" max="0.15" step="0.005" value="0.025" />
+        </div>
+
+        <div class="axis-grid">
+          <label class="select-field">
+            <span>Horizontal (X) Axis</span>
+            <select id="select-x-axis">
+              <option value="gz" selected>gz (Yaw)</option>
+              <option value="gy">gy (Roll)</option>
+              <option value="gx">gx (Pitch)</option>
+            </select>
+          </label>
+          <label class="select-field">
+            <span>Vertical (Y) Axis</span>
+            <select id="select-y-axis">
+              <option value="gx" selected>gx (Pitch)</option>
+              <option value="gy">gy (Roll)</option>
+              <option value="gz">gz (Yaw)</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="invert-row">
+          <label class="toggle-chip">
+            <input id="toggle-invert-x" type="checkbox" />
+            <span>Invert X</span>
+          </label>
+          <label class="toggle-chip">
+            <input id="toggle-invert-y" type="checkbox" />
+            <span>Invert Y</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="card telemetry-compact">
+        <h2>Live Sensors (<span id="gyro-unit">rad/s</span> | m/s&sup2; | &deg;)</h2>
+        <div class="telemetry-grid">
+          <div><span class="t-label">gx</span> <span id="val-gx" class="mono-val">0.00</span></div>
+          <div><span class="t-label">gy</span> <span id="val-gy" class="mono-val">0.00</span></div>
+          <div><span class="t-label">gz</span> <span id="val-gz" class="mono-val">0.00</span></div>
+          <div><span class="t-label">ax</span> <span id="val-ax" class="mono-val">0.00</span></div>
+          <div><span class="t-label">ay</span> <span id="val-ay" class="mono-val">0.00</span></div>
+          <div><span class="t-label">az</span> <span id="val-az" class="mono-val">0.00</span></div>
+          <div><span class="t-label">roll</span> <span id="val-roll" class="mono-val">0.0</span></div>
+          <div><span class="t-label">pitch</span> <span id="val-pitch" class="mono-val">0.0</span></div>
+          <div><span class="t-label">yaw</span> <span id="val-yaw" class="mono-val">0.0</span></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/app.js"></script>
+</body>
+</html>
